@@ -1,43 +1,53 @@
-package growingSquare;
+package movingDiagonal;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import base.AbstractPanel;
 
-public class GrowingSquare extends JFrame {
-
+public class movingDiagonal extends JFrame {
 	int counter = 0;
+	int sgn = 1, sgn2 = -1;
+	int index = 0;
+	int width = 1200, height = 700;
 	Color color = Color.BLACK;
+	String[] imgName = { "best-practices.png.rendition.intel.web.36.36.png",
+			"fb.png", "google.png", "instagram.png", "linkedin.png",
+			"original-original-for-sale.png", "things_to_do_icon_50_50_s_c1" };
 
 	DrawPanel drawPanel = new DrawPanel();
 
-	public GrowingSquare() {
+	public movingDiagonal() {
 		ActionListener listener = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 
 				if (counter == 0) {
-					Random random = new Random();
-					float hue = random.nextFloat();
-					float saturation = (random.nextInt(2000) + 1000) / 10000f;
-					float luminance = 0.9f;
-					color = Color.getHSBColor(hue, saturation, luminance);
+
 				}
-				if (counter < 13) {
+				if (counter < 12) {
 					counter++;
+					sgn = sgn * (-1);
 					drawPanel.repaint();
-					if (counter == 12) {
+					if (counter == 11) {
 						counter = 0;
+						sgn = 1;
+						sgn2 = -sgn2;
 					}
 				}
 			}
@@ -57,6 +67,11 @@ public class GrowingSquare extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				timer.start();
 				counter = 0;
+				sgn = 1;
+				sgn2 = -1;
+
+				Random random = new Random();
+				index = random.nextInt(imgName.length) - 1;
 			}
 		});
 
@@ -73,7 +88,7 @@ public class GrowingSquare extends JFrame {
 		});
 
 		pack();
-		setSize(1200, 700);
+		setSize(width, height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		drawPanel.setBackground(Color.darkGray);
@@ -85,38 +100,39 @@ public class GrowingSquare extends JFrame {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
-			g.setColor(color);
-			g.drawRect(600 - counter * 20, 350 - counter * 20, counter * 40, counter * 40);
-			g.drawOval(600 - counter * 20 - 2, 350 - counter * 20 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 - 2, 350 - counter * 20 + counter * 40 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 + counter * 40 - 2, 350 - counter * 20 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 + counter * 40 - 2, 350 - counter * 20 + counter * 40 - 2, 4, 4);
-			g.drawOval(600 - 2, 350 - 2, 4, 4);
+			try {
+				g.setColor(color);
+
+				String IMG_PATH = "files/ÇÔ˜Çá_ÏÑåã_ÏÑåã/images/"
+						+ imgName[index];
+				BufferedImage img = ImageIO.read(new File(IMG_PATH));
+
+				int step = width / 30;
+				if (counter > 0)
+					g.drawImage(img, width / 2 + sgn * counter * step,
+							height / 2 + -sgn2 * sgn * counter * height * step
+									/ width, null);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void paint(Graphics2D g) {
-			
-			g.setColor(color);
-			g.drawRect(600 - counter * 20, 350 - counter * 20, counter * 40, counter * 40);
-			g.drawOval(600 - counter * 20 - 2, 350 - counter * 20 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 - 2, 350 - counter * 20 + counter * 40 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 + counter * 40 - 2, 350 - counter * 20 - 2, 4, 4);
-			g.drawOval(600 - counter * 20 + counter * 40 - 2, 350 - counter * 20 + counter * 40 - 2, 4, 4);
-			g.drawOval(600 - 2, 350 - 2, 4, 4);
-			
+
 		}
 
 		@Override
 		public void create() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void end() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}
